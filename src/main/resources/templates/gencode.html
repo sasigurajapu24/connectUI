@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+
+	<div th:replace="menu :: menu">...</div>
+
+
+	<!-- container-fluid end  -->
+	<div ng-app="tc" ng-controller="genCodeCtrl" style="min-height: 416px">
+
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container padding-all">
+					<b><h4>GENERATE CODES</h4></b>
+				</div>
+			</div>
+
+
+			<!-- <div ng-show="screen=='list' " class="row container margin-top">
+
+				<div class="padding-all col-md-2">
+
+					<form class="form-inline" role="form">
+						<div class="form-group">
+							<select class="form-control" name="product.id"
+								ng-model="product"
+								ng-options="prod.name for prod in products track by prod.id">
+								<option value="" label="">Select Product</option>
+							</select>
+						</div>
+					</form>
+				</div>
+				<div style="float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="getData(product)"
+						class="btn btn-primary btn-block"><b>Show Result</b></a>
+				</div>
+			</div> -->
+			
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th>SNo.</th>
+							<th>User Name</th>
+							<th>Company Name</th>
+							<th>Product Name</th>
+							<th>Batch Code</th>
+							<th>Generate QrCodes</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="request in requests.content">
+							<td>{{$index+1}}</td>
+							<td>{{request.user.username}}</td>
+							<td>{{request.user.companyName}}</td>
+							<td>{{request.code.product.name}}</td>
+							<td>{{request.code.batchCode}}</td>
+							<td>
+								<a href="" ng-show="request.status == 0"
+								class="btn btn-danger btn-block" ng-click="generateCodes(request)"><b>REQUEST CODES</b></a>
+								<span 
+								ng-show="uniqueCode.status == 1" style="color: green"><strong>QRCodes Generated</strong></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<ul class="pager">
+					<li class="previous"><a href="#">&lt;&lt; Previous</a></li>
+					<li class="next"><a href="#">Next &gt;&gt;</a></li>
+				</ul>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<!-- Start of the footer  -->
+	<div class="site-footer">
+		<div class="blue-strip"></div>
+		<div class="red-strip">
+			<div class="container">
+				<div class="col-sm-10"></div>
+				<div class="col-sm-2">
+					<span class="float-right">A TrueCheck intiative</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of the footer  -->
+
+
+
+	<!-- js placed at the end of the document so the pages load faster
+	-->
+	<script src="/public/js/jquery.js">
+		
+	</script>
+	<script src="/public/js/bootstrap.min.js">
+		
+	</script>
+</body>
+</html>

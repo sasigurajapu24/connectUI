@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+	
+		<div th:replace="menu :: menu">...</div>
+
+  	<!-- container-fluid end  -->
+	<div ng-app="tc" ng-controller="menuCtrl" style="min-height:416px">
+
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container padding-all">
+					<b><h4>ADD PRODUCT NOTIFICATIONS</h4></b>
+				</div>
+			</div>
+
+			<div ng-show="screen=='list'" class="row container margin-top">
+				<div class="padding-all col-md-5">
+					<input type="search" class="form-control"
+						placeholder="search your notifications" name="search"
+						ng-model="search.query" />
+
+				</div>
+				<div style="float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="addOption()"
+						class="btn btn-primary btn-block"><b>ADD OPTION</b></a>
+				</div>
+			</div>
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th class="col-md-1">Sr. No</th>
+							<th class="col-md-2">Module</th>
+							<th class="col-md-2">Category</th>
+							<th class="col-md-3">Division</th>
+							<th class="col-md-2">Brand</th>
+							<th class="col-md-2">Name</th>
+							<th class="col-md-2">Action</th>
+							<th class="col-md-2">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="option in options.content">
+							<td>{{$index+1}}</td>
+							<td>{{option.module}}</td>
+							<td>{{option.category.name}}</td>
+							<td>{{option.division.name}}</td>
+							<td>{{option.brand.name}}</td>
+							<td>{{option.name}}</td>
+							<td>{{option.action}}</td>
+							<td><a href="#" ng-click="viewCode(notification);">View</a> |
+								<a href="#" ng-click="editCode(notification);">Edit</a> | <a
+								href="">Delete</a></td>
+						</tr>
+						
+					</tbody>
+				</table>
+				
+				<!-- <pagination page="currentPage" ng-change="pageChanged()" ng-model="currentPage" max-size="size" total-items="notifications.totalElements" items-per-page="notifications.numberOfElements"></pagination> -->
+				<!-- <pagination ng-show="notifications.totalElements > 0"
+				ng-change="pageChanged()" total-items="notifications.totalElements"
+				items-per-page="oprsLayouts.size" ng-model="currentPage"
+				max-size="size" class="pagination-sm" boundary-links="true"
+				rotate="false" num-pages="totalPages"></pagination> -->
+				<pager total-items="notifications.totalElements" num-pages="totalPages" ng-model="currentPage" ng-change="pageChanged()"  items-per-page="notifications.numberOfElements"></pager>
+				<!-- <ul class="pager">
+					<li class="previous" ng-disabled="currentPage &lt; 1" ng-click="currentPage != 0||selectPage(currentPage-1)"><a href="#">&lt;&lt; Previous</a></li>
+					<li class="next" ng-disabled="currentPage == totalPages" ng-click="currentPage &lt; totalPages|| selectPage(currentPage+1)"><a href="#">Next &gt;&gt;</a></li>
+				</ul> -->
+			</div>
+			<div class="row container margin-top"
+				ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+				<form action="{{action}}" role="form" method="Post" enctype="multipart/form-data">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="panel panel-default" style="">
+								<div class="title panel-heading">
+									<b><i class="fa fa-angle-right"></i>&nbsp;Product Categories</b>
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-4 ">
+											 <label for="category">Category:</label>
+										     <select  class="form-control" name="category" id="category"
+										        ng-options="category as category.name for category in categories track by category.id"
+										        ng-model="option.category" ng-change="getTypes()">
+										     	<option value=""></option>   
+										     </select>
+										     <span style="color: red" ng-if="isCategoryEmpty!=null">{{isCategoryEmpty}}</span>
+										</div>
+										<div class="col-md-4 ">
+											 <label for="category">Division :</label>
+										     <select name="type" class="form-control" id="type"
+										        ng-options="type as type.name for type in types track by type.id"
+										        ng-model="option.division"  ng-change="getBrands()">
+										        <option value=""></option>
+										        </select>
+										        <span style="color: red" ng-if="isDivisionEmpty!=null">{{isDivisionEmpty}}</span>
+										</div>
+										<div class="col-md-4 ">
+											 <label for="category">Brand :</label>
+										     <select name="type" class="form-control" id="type"
+										        ng-options="brand as brand.name for brand in brands track by brand.id"
+										        ng-model="option.brand" ng-change="getParents()">
+										        	<option value=""></option>
+										        </select>
+										        <span style="color: red" ng-if="isBrandEmpty!=null">{{isBrandEmpty}}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel panel-default" style="">
+								<div class="title panel-heading">
+									<b><i class="fa fa-angle-right"></i>&nbsp;Option Details</b>
+								</div>
+								<div class="panel-body">
+									<div class="row">
+										<div class="col-md-4 ">
+											<div class="form-group">
+												<label class="required-field">Menu Name</label> 
+												<input type="text" class="form-control" placeholder="Menu Name" name="menuName" 
+													ng-model="option.menuName"  /> 
+												<span style="color: red" ng-if="isMenuNameEmpty!=null">{{isMenuNameEmpty}}</span>
+											</div>
+										</div>
+										<div class="col-md-4 ">
+											<div class="form-group">
+												<label class="required-field">MODULE</label> 
+												
+												<input type="text" ng-hide="true" class="form-control" placeholder="Name" name="id" ng-model="option.id" />
+												<input type="text" class="form-control" placeholder="Name" name="name" 
+													ng-model="option.module" /> <span style="color: red" ng-if="isNameEmpty!=null">{{isNameEmpty}}</span>
+											</div>
+										</div>
+										<div class="col-md-4 ">
+											<div class="form-group">
+												<label class="required-field">Screen Name</label> 
+												<input type="text" class="form-control" placeholder="Name" name="name" 
+													ng-model="option.screenName" /> 
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4 ">
+											<div class="form-group">
+												<label class="required-field">Action</label> 
+												<input type="text" class="form-control" placeholder="Name" name="name" 
+													ng-model="option.action" /> 
+											</div>
+										</div>
+										<div class="col-md-4 ">
+											<div class="form-group">
+												<label class="required-field">Parent</label>
+												 <select name="type" class="form-control" id="type"
+										        ng-options="poption as poption.menuName for poption in parentOptions"
+										        ng-model="option.parent">
+										        <option value=""></option>
+										        </select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<hr />
+							<button  ng-click="saveOption(screen, option);" type="button" class="btn btn-primary btn-default">
+								<i class="fa fa-plus-square"></i> {{screen}}
+							</button>
+							<button ng-click="screen='list'" type="button" class="btn btn-danger btn-default">
+								<i class="fa fa-plus-square"></i> Cancel/Back
+							</button>
+						</div>
+						<div class="row"><br/><br/></div>
+					</div>
+				</form>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<!-- Start of the footer  -->
+	<div th:replace="footer :: footer">...</div>
+	<!-- End of the footer  -->
+
+
+
+	<!-- js placed at the end of the document so the pages load faster
+	-->
+	
+	<script th:src="@{'/public/js/menu-options.js'}"></script>
+		
+	
+</body>
+</html>

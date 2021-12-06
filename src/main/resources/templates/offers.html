@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+	
+		<div th:replace="menu :: menu">...</div>
+
+  	<!-- container-fluid end  -->
+	<div ng-app="tc" ng-controller="offersCtrl" style="min-height:416px">
+
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container padding-all">
+					<b><h4>ADD OFFERS</h4></b>
+				</div>
+			</div>
+
+			<div ng-show="screen=='list'" class="row container margin-top">
+				<div class="padding-all col-md-5">
+					<input type="search" class="form-control"
+						placeholder="search your offer" name="search"
+						ng-model="search.query" />
+
+				</div>
+				<div style="float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="addOffer()"
+						class="btn btn-primary btn-block"><b>ADD OFFER</b></a>
+				</div>
+			</div>
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th class="col-md-1">Sr. No</th>
+							<th class="col-md-2">Offer Name</th>
+							<th class="col-md-3">Image</th>
+							<th class="col-md-2">From Date</th>
+							<th class="col-md-2">To Date</th>
+							<th class="col-md-2">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="offer in offers.content">
+							<td>{{$index+1}}</td>
+							<td>{{offer.name}}</td>
+							<td><img height="56" width="56" ng-hide="{{offer.image == ''}}" src="data:image/JPEG;base64,{{offer.image}}"/></td>
+							<td>{{offer.fromDate | date:'mediumDate'}}</td>
+							<td>{{offer.toDate | date:'mediumDate'}}</td>
+							<td><a href="#" ng-click="viewOffer(offer);">View</a> |
+								<a href="#" ng-click="editOffer(offer);">Edit</a> | <a
+								href="">Delete</a></td>
+						</tr>
+						
+					</tbody>
+				</table>
+				
+				<!-- <pagination page="currentPage" ng-change="pageChanged()" ng-model="currentPage" max-size="size" total-items="notifications.totalElements" items-per-page="notifications.numberOfElements"></pagination> -->
+				<!-- <pagination ng-show="notifications.totalElements > 0"
+				ng-change="pageChanged()" total-items="notifications.totalElements"
+				items-per-page="oprsLayouts.size" ng-model="currentPage"
+				max-size="size" class="pagination-sm" boundary-links="true"
+				rotate="false" num-pages="totalPages"></pagination> -->
+				<pager total-items="offers.totalElements" num-pages="totalPages" ng-model="currentPage" ng-change="pageChanged()"  items-per-page="offers.numberOfElements"></pager>
+				<!-- <ul class="pager">
+					<li class="previous" ng-disabled="currentPage &lt; 1" ng-click="currentPage != 0||selectPage(currentPage-1)"><a href="#">&lt;&lt; Previous</a></li>
+					<li class="next" ng-disabled="currentPage == totalPages" ng-click="currentPage &lt; totalPages|| selectPage(currentPage+1)"><a href="#">Next &gt;&gt;</a></li>
+				</ul> -->
+			</div>
+			<div class="row container margin-top"
+				ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+				<form action="{{action}}" role="form" method="Post"  enctype="multipart/form-data">
+					<div class="col-md-6">
+						<div class="panel panel-default" style="">
+							<div class="title panel-heading">
+								<b ng-if="screen=='Save'"><i class="fa fa-angle-right"></i>
+									&nbsp;ADD OFFER</b> <b ng-if="screen=='Update'"> <i
+									class="fa fa-angle-right"></i> &nbsp;EDIT OFFER
+								</b> <b ng-if="screen=='View'"> <i class="fa fa-angle-right"></i>
+									&nbsp;VIEW OFFER
+								</b>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label>Name</label>
+									<!-- <label>{{code.product.name}}</label> -->
+									<input type="text" class="form-control" placeholder="" name="name" ng-model="offer.name"
+													ng-disabled="screen=='View'" />
+								</div>
+								<div class="form-group">
+									<label>Image</label> 
+									<input type="hidden" name="id"
+										value="{{offer.id}}" />
+									 <input type="file" id="file" class="form-control" placeholder="file" name="image"
+												file-model="image" ng-readonly="screen=='View'" />
+								</div>
+
+									<div class="form-horizontal ">
+										<label>From Date:</label>
+										<div class="inner-addon right-addon">
+											<input ng-click="fromopen($event)" type="text"
+												ng-readonly="true" required="required" name="fromDate"
+												class="form-control" datepicker-popup="yyyy-MM-dd"
+												ng-model="offer.fromDate" is-open="fromstatus.opened"
+												min-date="minDate" max-date="maxDate"
+												datepicker-options="dateOptions"
+												date-disabled="disabled(date, mode)" ng-required="true"
+												close-text="Close" /> <!-- <i ng-click="fromopen($event)"
+												class="glyphicon glyphicon-calendar"></i> -->
+										</div>
+									</div>
+									<div class="form-group">
+										<label>TO Date:</label>
+										<div class="inner-addon right-addon">
+											<input ng-click="toopen($event)" type="text"
+												ng-readonly="true" required="required" name="toDate"
+												class="form-control" datepicker-popup="yyyy-MM-dd"
+												ng-model="offer.toDate" is-open="tostatus.opened"
+												min-date="minDate" max-date="maxDate"
+												datepicker-options="dateOptions"
+												date-disabled="disabled(date, mode)" ng-required="true"
+												close-text="Close" /> <!-- <i ng-click="toopen($event)"
+												class="glyphicon glyphicon-calendar"></i> -->
+										</div>
+									</div>
+
+								<hr />
+								<button ng-hide="screen=='View'" type="button"
+									class="btn btn-primary btn-default"  ng-click="submitForm(screen, offer )">
+									<i class="fa fa-plus-square"></i> {{screen}}
+								</button>
+								<button ng-click="screen='list'" type="button"
+									class="btn btn-danger btn-default">
+									<i class="fa fa-plus-square"></i> Cancel/Back
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Start of the footer  -->
+	<div th:replace="footer :: footer">...</div>
+	<!-- End of the footer  -->
+
+
+
+	<!-- js placed at the end of the document so the pages load faster
+	-->
+	
+	
+		
+	
+</body>
+</html>

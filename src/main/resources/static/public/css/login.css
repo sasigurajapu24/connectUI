@@ -1,0 +1,55 @@
+.main-bg {
+  background-image: url("../img/main-bg.jpg"); background-repeat:repeat-x; max-height: 124px;  }
+
+.signup-bg {
+  background-image: url("../img/main-bg.jpg");
+  background-repeat:repeat-x;  
+  }
+
+.header {height:105px; border:0px solid #000;}
+.header a{text-decoration: none; color: #fff;}
+.logo {padding-top:20px;}
+
+.banner {background-image:url("../img/banner-home.jpg"); min-height:350px;}
+.banner h1 {font-size: 45px; color: #ffffff; text-decoration: none; line-height:45pt; padding-top: 25px;}
+.banner-img {padding-top:100px;}
+
+.banner-signup {width:100%; background-position: center;  margin: 0px auto; border:0px solid #000;}
+.banner-signup img {width:100%;}
+
+.padding-top {padding-top:100px;}
+.padding-all {padding:10px;}
+.margin-top {margin-top: 10px;}
+.bg-head {background-color: #e4e4e4;}
+.bg-red {background-color: #ff0000;}
+
+
+.site-footer {margin-top:20px; width:100%; position:fixed; left:0px; bottom:0px;}
+.blue-strip {background-color:#262262; height:2px;}
+.red-strip {background-color:#ff0000; color:#fff; margin-top:0px; padding-top:5px; min-height: 30px;}
+
+
+.float-right {float:right;}
+.for-height {min-height:150px; margin:5px;}
+td {font-weight: bold;}
+
+
+.panel{
+	background-color: #fff !important;
+}
+.navbar{
+	border-radius : 0px;
+}
+
+.inner-addon {
+    position: relative;
+}
+.right-addon .glyphicon {
+    right: 0px;
+}
+
+.glyphicon-calendar {
+    position: absolute;
+    padding: 10px;
+    pointer-events: none;
+}

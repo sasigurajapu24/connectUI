@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+	
+		<div th:replace="menu :: menu">...</div>
+
+  	<!-- container-fluid end  -->
+	<div ng-app="tc" ng-controller="approveCtrl" style="min-height:416px">
+
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container padding-all">
+					<b><h4>APPROVE USERS</h4></b>
+				</div>
+			</div>
+
+			<div ng-show="screen=='list'" class="row container margin-top">
+				<div class="padding-all col-md-5">
+					<input type="search" class="form-control"
+						placeholder="search service center users" name="search"
+						ng-model="search.query" />
+
+				</div>
+				<div style="float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="search()"
+						class="btn btn-primary btn-block"><b>Search</b></a>
+				</div>
+			</div>
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th class="col-md-1">Name</th>
+							<th class="col-md-2">Service Name</th>
+							<th class="col-md-2">Service Address</th>
+							<th class="col-md-2">Approve</th>
+						
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="approve in users">
+							<td>{{approve.name}}</td>
+							<td>{{approve.serviceCenter.name}}</td>
+							<td>{{approve.serviceCenter.addressInfo.city}} {{approve.serviceCenter.addressInfo.state}}</td>
+							<td><a href="#" ng-click="approveServiceUser(approve.id);">Approve</a> &nbsp;<a href="#" ng-click="rejectServiceUser(approve.id);">Reject</a></td>
+							<!-- <td><a href="#" ng-click="viewCode(notification);">View</a> |
+								<a href="#" ng-click="editCode(notification);">Edit</a> | <a
+								href="">Delete</a></td> -->
+						</tr>
+						
+					</tbody>
+				</table>
+				
+				<!-- <pagination page="currentPage" ng-change="pageChanged()" ng-model="currentPage" max-size="size" total-items="notifications.totalElements" items-per-page="notifications.numberOfElements"></pagination> -->
+				<!-- <pagination ng-show="notifications.totalElements > 0"
+				ng-change="pageChanged()" total-items="notifications.totalElements"
+				items-per-page="oprsLayouts.size" ng-model="currentPage"
+				max-size="size" class="pagination-sm" boundary-links="true"
+				rotate="false" num-pages="totalPages"></pagination> -->
+				<pager total-items="" num-pages="totalPages" ng-model="currentPage" ng-change="pageChanged()"  items-per-page=""></pager>
+				<!-- <ul class="pager">
+					<li class="previous" ng-disabled="currentPage &lt; 1" ng-click="currentPage != 0||selectPage(currentPage-1)"><a href="#">&lt;&lt; Previous</a></li>
+					<li class="next" ng-disabled="currentPage == totalPages" ng-click="currentPage &lt; totalPages|| selectPage(currentPage+1)"><a href="#">Next &gt;&gt;</a></li>
+				</ul> -->
+			</div>
+			<div class="row container margin-top"
+				ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+				<form action="{{action}}" role="form" method="Post">
+					<div class="col-md-6">
+						<div class="panel panel-default" style="">
+							<div class="title panel-heading">
+								<b ng-if="screen=='Save'"><i class="fa fa-angle-right"></i>
+									&nbsp;Add Code</b> <b ng-if="screen=='Update'"> <i
+									class="fa fa-angle-right"></i> &nbsp;Edit Code
+								</b> <b ng-if="screen=='View'"> <i class="fa fa-angle-right"></i>
+									&nbsp;View Code
+								</b>
+							</div>
+							<div class="panel-body">
+								<div class="form-group">
+									<label>Product</label>
+									<!-- <label>{{code.product.name}}</label> -->
+									
+									<select class="form-control" name="product.id"
+										ng-model="notification.product"
+										ng-options="prod.name for prod in products.content track by prod.id" ng-disabled="screen=='View' || screen=='Edit'">
+										<option value="" label="">Please Select</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label>Notification</label> <input type="hidden" name="id"
+										value="{{notification.id}}" />
+									<textarea class="form-control"
+										placeholder="Notificaton Message" name="notification"
+										ng-model="notification.notification"
+										ng-disabled="screen=='View'"></textarea>
+								</div>
+
+									<div class="form-horizontal ">
+										<label>From Date:</label>
+										<div class="inner-addon right-addon">
+											<input ng-click="fromopen($event)" type="text"
+												ng-readonly="true" required="required" name="fromDate"
+												class="form-control" datepicker-popup="yyyy-MM-dd"
+												ng-model="notification.fromDate" is-open="fromstatus.opened"
+												min-date="minDate" max-date="maxDate"
+												datepicker-options="dateOptions"
+												date-disabled="disabled(date, mode)" ng-required="true"
+												close-text="Close" /> <!-- <i ng-click="fromopen($event)"
+												class="glyphicon glyphicon-calendar"></i> -->
+										</div>
+									</div>
+									<div class="form-group">
+										<label>TO Date:</label>
+										<div class="inner-addon right-addon">
+											<input ng-click="toopen($event)" type="text"
+												ng-readonly="true" required="required" name="toDate"
+												class="form-control" datepicker-popup="yyyy-MM-dd"
+												ng-model="notification.toDate" is-open="tostatus.opened"
+												min-date="minDate" max-date="maxDate"
+												datepicker-options="dateOptions"
+												date-disabled="disabled(date, mode)" ng-required="true"
+												close-text="Close" /> <!-- <i ng-click="toopen($event)"
+												class="glyphicon glyphicon-calendar"></i> -->
+										</div>
+									</div>
+
+								<hr />
+								<button ng-hide="screen=='View'" type="button"
+									class="btn btn-primary btn-default"  ng-click="submitForm(screen, notification )">
+									<i class="fa fa-plus-square"></i> {{screen}}
+								</button>
+								<button ng-click="screen='list'" type="button"
+									class="btn btn-danger btn-default">
+									<i class="fa fa-plus-square"></i> Cancel/Back
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6"></div>
+				</form>
+			</div>
+
+
+		</div>
+
+	</div>
+	</body>
+	</html>

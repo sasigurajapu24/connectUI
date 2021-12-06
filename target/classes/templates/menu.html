@@ -1,0 +1,59 @@
+<div th:fragment="menu"  class="main-bg container-fluid">
+
+
+		<div class="container">
+			<div class="header logo">
+				<a href="#"><img height="66" width="260" style="float:left" src="/public/img/logo-connect.jpg" /></a>
+				<span><a href="/logout" class="float-right">Logout</a></span>
+				<span><a	href="" class="float-right"><span sec:authorize="isAuthenticated()"> Welcome : <!--  <span sec:authentication="principal.authorities"></span>  --><span sec:authentication="name">${#authentication.principal.username}</span>  </span> &nbsp;|&nbsp;</a></span>
+			</div>
+
+			<!-- <div class="col-md-12 bg-head">	
+		
+		container end 
+		<nav>
+		
+ <ul>
+				<li ng-class="{active: 1==module}"><a href="/#/dashboard"><i class="fa fa-tachometer"></i> Dashboard</a></li>
+				<li ng-class="{active: 1==module}"><a href="/#/subscriber"><i class="fa fa-history"></i> Subscription History</a></li>
+				<li ng-class="{active: 2==module}"><a href="/#/activation"><i class="fa fa-thumbs-up"></i> Activation</a></li>
+				<li ng-class="{active: 3==module}"><a href="/#/deactivation"><i class="fa fa-thumbs-down"></i> Deactivation</a></li>
+				
+			</ul>
+			</nav>
+			</div> -->
+		</div>
+		
+		
+<!-- <div class="row-fluid">
+          <div class="span6">Fluid 6</div>
+          <div class="span6">Fluid 6</div>
+        </div> -->
+	
+
+<nav class="navbar navbar-default margin-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#"></a>
+		</div>
+		<ul class="nav navbar-nav">
+			<li ng-class="{active: 1==module}"><a href="/add-products">Products</a></li>
+			<li ng-class="{active: 8==module}"  sec:authorize="hasAuthority('admin')"><a href="/approveuser">Approve User</a></li>
+			<!-- <li ng-class="{active: 2==module}"><a href="/add-codes">Truecheck
+					Codes</a></li> -->
+			<!-- <li ng-class="{active: 3==module}"><a href="/add-notification">Notifications</a></li>
+			<li ng-class="{active: 4==module}"><a href="/reports">Reports</a></li> -->
+			<li ng-class="{active: 6==module}" sec:authorize="hasAuthority('admin')"><a href="/adduser">Add User</a></li>
+			
+			<li ng-class="{active: 9==module}" sec:authorize="hasAuthority('admin')"><a href="/configurations">Configurations</a></li>
+			<li ng-class="{active: 10==module}"  sec:authorize="hasAuthority('admin')"><a href="/menuoptions">MenuOptions</a></li>
+			
+		
+			<!-- <li ng-class="{active: 5==module}" sec:authorize="hasAuthority('admin')"><a href="/gencode">Generate Code</a></li>
+			<li ng-class="{active: 7==module}" sec:authorize="hasAuthority('admin')"><a href="/offers">Offers</a></li> -->
+			
+		</ul>
+	</div>
+</nav>
+
+</div>

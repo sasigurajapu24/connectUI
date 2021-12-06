@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+	<div th:replace="menu :: menu">...</div>
+
+	<!-- container-fluid end  -->
+	<div ng-app="tc" ng-controller="userCtrl" style="min-height: 416px">
+
+		<div class="container">
+			<div class="row container margin-top">
+				<div class="container padding-all">
+					<h4>
+						<b ng-if="screen=='Save'">
+						<h4>ADD USER</h4>
+					</b> <b ng-if="screen=='Update'">
+						<h4>EDIT USER</h4>
+					</b> <b ng-if="screen=='View'">
+						<h4>USER DETAILS</h4>
+					</b> <b ng-if="screen=='list'">
+						<h4>USERS LIST</h4>
+					</b>
+					</h4>
+				</div>
+			</div>
+
+			<div class="row container margin-top">
+				<div ng-show="errors.length > 0" class="alert alert-danger">
+					<div ng-repeat="error in errors">{{error.defaultMessage}}</div>
+				</div>
+			</div>
+
+			<div ng-show="screen=='list' " class="row container margin-top">
+				<div style="display: none;" class="padding-all col-md-5">
+					<input type="search" class="form-control" placeholder="search users" />
+
+				</div>
+				<div style="display: none; float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="searchUser()" class="btn btn-primary btn-block"><b>Search</b></a>
+				</div>
+				<div sec:authorize="hasAuthority('admin')" style="float: right" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="addMerchant()" class="btn btn-primary btn-block"><b>ADD USER</b></a>
+				</div>
+			</div>
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th class="col-md-1">Sr. No</th>
+							<th class="col-md-3">User Name</th>
+							<th class="col-md-3">Email-ID</th>
+							<th class="col-md-2">Mobile Number</th>
+							<th class="col-md-2" style="word-wrap: break-word">Address</th>
+							<th class="col-md-2">Entry Count</th>
+							<th class="col-md-2">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="user in users.content">
+							<td>{{$index+1}}</td>
+							<td>{{user.username}}</td>
+							<td>{{user.emailid}}</td>
+							<td>{{user.mobile}}</td>
+							<td>{{user.address}}</td>
+							<td>{{user.count}}</td>
+							<td><a href="#" ng-click="viewMerchant(user);" >View</a>
+							 <span  > | </span>  <a href="#" ng-click="editMerchant(user);">Edit</a>
+							 <span  > | </span>  <a href="#">Delete</a></td>
+							
+						</tr>
+					</tbody>
+				</table>
+				<pager total-items="users.totalElements" ng-model="currentPage" ng-change="pageChanged()" items-per-page="users.numberOfElements"></pager>
+			</div>
+			
+			<!-- <div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th class="col-md-1">Sr. No</th>
+							<th class="col-md-2">Merchant Name</th>
+							<th class="col-md-2">Store Name</th>
+							<th class="col-md-2">Mobile</th>
+							<th class="col-md-2" style="word-wrap: break-word">Address</th>
+							<th class="col-md-2">Actions</th>
+							
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="user in users.content">
+							<td>{{$index+1}}</td>
+							<td>{{user.name}}</td>
+							<td>{{user.store.name}}</td>
+							<td>{{user.msisdn}}</td>
+							<td>{{user.location}}</td>
+							<td><a href="#" ng-click="viewMerchant(user);" >View</a>
+							 <span  > | </span>  <a href="#" ng-click="editMerchant(user);">Edit</a>
+							 <span  > | </span>  <a href="#">Delete</a></td>
+						</tr>
+					</tbody>
+				</table>
+				<pager total-items="users.totalElements" ng-model="currentPage" ng-change="pageChanged()" items-per-page="users.numberOfElements"></pager>
+			</div> --> 
+
+			<div class="row container margin-top" ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+				<form action="{{action}}"  name="merchantForm" role="form" method="Post" novalidate="true">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="panel panel-default" style="">
+								<div class="title panel-heading">
+									<b ng-if="screen=='Save'"><i class="fa fa-angle-right"></i> &nbsp;Add User</b> <b ng-if="screen=='Update'"> <i
+										class="fa fa-angle-right"></i> &nbsp;Edit User
+									</b> <b ng-if="screen=='View'"> <i class="fa fa-angle-right"></i> &nbsp;View User
+									</b>
+								</div>
+								<div class="panel-body">
+								<div class="row">
+								<div class="col-md-4">
+										<!-- NAME -->
+								        <div class="form-group" >
+											<label>User Name</label>
+											<!-- <label>{{code.product.name}}</label> -->
+											<input type="text" class="form-control"  name="username" placeholder="Username must be emailid" ng-model="user.username"
+											ng-change="isExistUser()" /> <br /> <label class="registerErrorMsg" ng-if="isEmptyUser!=null">{{isEmptyUser}}</label>
+										</div>
+									</div>
+									
+									<div class="col-md-4">
+										<!-- NAME -->
+								        <div class="form-group">
+											<label > Password </label><input class="form-control"  type="text" name="password" placeholder="Password" ng-model="user.password" /> <br /> <label
+										class="registerErrorMsg" ng-if="isEmptyPassword!=null">{{isEmptyPassword}}</label>
+										</div>
+									</div>
+								
+									<div class="col-md-4">
+										<!-- NAME -->
+								        <div class="form-group" ng-class="{ 'has-error' : merchantForm.firstName.$invalid &amp;&amp; !merchantForm.firstName.$pristine }">
+											<label>First Name</label>
+											<!-- <label>{{code.product.name}}</label> -->
+											<input type="text" class="form-control" name="firstName" ng-model="user.firstName"
+												ng-disabled="screen=='View' || screen=='Update'" required="true"/>
+											<p ng-show="merchantForm.firstName.$invalid &amp;&amp; !merchantForm.firstName.$pristine" class="help-block">First Name name is required.</p>
+										</div>
+									</div>
+									</div>
+									<div class="row">
+									<div class="col-md-4">
+										<div class="form-group" ng-class="{ 'has-error' : merchantForm.firstName.$invalid &amp;&amp; !merchantForm.firstName.$pristine }">
+											<label>Last Name</label>
+											<!-- <label>{{code.product.name}}</label> -->
+
+											<input type="text" class="form-control" name="user.lastName" ng-model="merchant.lastName"
+												ng-disabled="screen=='View' || screen=='Update'" required="true"/>
+												
+											<p ng-show="merchantForm.merchant.lastName.$invalid &amp;&amp; !merchantForm.merchant.lastName.$pristine" class="help-block">Last Name name is required.</p>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group" ng-class="{ 'has-error' : merchantForm.merchant.address.$invalid &amp;&amp; !merchantForm.merchant.address.$pristine }">
+											<label>Address</label> <input type="hidden" name="id" value="{{merchant.id}}" /> 
+											<textarea class="form-control"
+												name="merchant.address" ng-model="user.address" ng-disabled="screen=='View'" required="true"></textarea>
+											<p ng-show="merchantForm.merchant.address.$invalid &amp;&amp; !merchantForm.merchant.address.$pristine" class="help-block">Merchant address is required.</p>
+											<br /> <label class="registerErrorMsg" ng-if="isEmptyAddress!=null">{{isEmptyAddress}}</label>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group" ng-class="{ 'has-error' : merchantForm.merchant.msisdn.$invalid &amp;&amp; !merchantForm.merchant.msisdn.$pristine }">
+											<label>Mobile No</label> <input type="number" class="form-control" name="merchant.msisdn" ng-model="user.mobile"
+												ng-disabled="screen=='View'" maxlength="10" ng-minlength="10" ng-maxlength="10" />
+  											<p ng-show="merchantForm.merchant.msisdn.$error.minlength" class="help-block">Mobile No should be 10 digits.</p>
+  											<p ng-show="merchantForm.merchant.msisdn.$error.maxlength" class="help-block">Mobile No should be 10 digits.</p>
+  											<br/><label class="registerErrorMsg" ng-if="isEmptyMobile!=null">{{isEmptyMobile}}</label>
+										</div>
+									</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- <div class="row">
+							<div class="panel panel-default" style="">
+								<div class="title panel-heading">
+									<b><i class="fa fa-angle-right"></i>&nbsp;Store Details</b>
+								</div>
+								<div class="panel-body">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Brand</label>
+											<label>{{code.product.name}}</label>
+											<select  class="form-control" name="brand" id="brand"
+										        ng-options="brand.id as brand.companyName for brand in brands"
+										        ng-model="merchant.store.brand" ng-readonly="screen=='View' || screen=='Update'" ></select>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Store ID</label>
+											<label>{{code.product.name}}</label>
+
+											<input type="text" class="form-control" name="merchant.store.storeId" ng-model="merchant.store.storeId"
+												ng-disabled="screen=='View' || screen=='Update'" />
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Store Name</label>
+											<label>{{code.product.name}}</label>
+
+											<input type="text" class="form-control" name="merchant.store.name" ng-model="merchant.store.name"
+												ng-disabled="screen=='View' || screen=='Update'" />
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Address</label> <textarea type="text" class="form-control" placeholder="Address" name="merchant.store.address"
+												ng-model="merchant.store.area" ng-disabled="screen=='View'" ></textarea>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Country</label> <input type="text" class="form-control" name="merchant.store.country"
+												ng-model="merchant.store.country" value="INDIA" ng-readonly="true" />
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>State</label> <select class="form-control" name="category" id="category" ng-options="state.name as state.name for state in states"
+												ng-model="merchant.store.state"></select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> -->
+
+						<div class="row">
+							<hr />
+							<button ng-hide="screen=='View'" type="button" class="btn btn-primary btn-default" ng-click="submitForm(screen, merchant )">
+								<i class="fa fa-plus-square"></i> {{screen}}
+							</button>
+							<button ng-click="screen='list'" type="button" class="btn btn-danger btn-default">
+								<i class="fa fa-plus-square"></i> Cancel/Back
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Start of the footer  -->
+	<div class="site-footer">
+		<div class="blue-strip"></div>
+		<div class="red-strip">
+			<div class="container">
+				<div class="col-sm-10"></div>
+				<div class="col-sm-2">
+					<span class="float-right">a trueCheck intiative</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of the footer  -->
+
+
+
+	<!-- js placed at the end of the document so the pages load faster
+	-->
+	<script src="/public/js/jquery.js">
+		
+	</script>
+	<script src="/public/js/bootstrap.min.js">
+		
+	</script>
+</body>
+</html>

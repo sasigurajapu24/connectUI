@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>trueCheck - Anti Counterfeit</title>
+
+<link rel="stylesheet"
+	href="http://fonts.googleapis.com/css?family=Open+Sans:400,700"/>
+
+<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+
+<link href="/public/css/style.css" rel="stylesheet"/>
+</head>
+
+<body>
+	<div id="main">
+		<div id="box">
+
+			<div id="logbox">
+				<div id="logbox_in">
+					<div id="login">
+						<div th:if="${param.error}" style="color:white">Invalid username and password.</div>
+						<div th:if="${param.logout}" style="color:white">You have been logged out.</div>
+						<form th:action="@{/login}" method="post">
+
+							<fieldset class="clearfix">
+
+								<p>
+									<span class="fontawesome-user"></span><input type="text"
+										name="username" value="Username"
+										onBlur="if(this.value == '') this.value = 'Username'"
+										onFocus="if(this.value == 'Username') this.value = ''"
+										required="true"/>
+								</p>
+								<!-- JS because of IE support; better: placeholder="Username" -->
+								<p>
+									<span class="fontawesome-lock"></span><input type="password"
+										name="password" value="Password"
+										onBlur="if(this.value == '') this.value = 'Password'"
+										onFocus="if(this.value == 'Password') this.value = ''"
+										required="true"/>
+								</p>
+								<!-- JS because of IE support; better: placeholder="Password" -->
+								<p>
+									<input type="submit" value="Sign In"/>
+								</p>
+
+							</fieldset>
+
+						</form>
+
+						<p>
+							<a href="javascript(0)">Forgot Password?</a><span></span>
+							<a href="/register/registration">New User!</a>
+						</p>
+
+					</div>
+					<!-- end login -->
+					<div class="cl">&nbsp;</div>
+				</div>
+				<!-- end logbox_in -->
+			</div>
+			<!-- end logbox -->
+		</div>
+		<!-- end box -->
+	</div>
+	<!-- end main -->
+
+</body>
+</html>
+
+
+

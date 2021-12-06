@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+   <div th:replace="includes :: includes">...</div>
+   <script src="/public/js/configurations.js"></script>
+   <body ng-app="tc" >
+      <div th:replace="menu :: menu">...</div>
+      <!-- container-fluid end  -->
+      <div ng-app="tc" ng-controller="configurationsCtrl" style="min-height: 416px">
+         <div class="container">
+            <div class="row container margin-top">
+               <div ng-show="errors.length > 0" class="alert alert-danger">
+                  <div ng-repeat="error in errors">{{error.defaultMessage}}</div>
+               </div>
+            </div>
+            <ul class="nav nav-pills">
+               <li class="active"> <a data-toggle="pill" href="#category" ng-click="screen='list'; getCategories()"><b>Categories</b></a></li>
+               <li>  <a data-toggle="pill" href="#division"  ng-click="screen='list'; getDivisions()"><b>Divisions</b></a></li>
+               <li> <a data-toggle="pill" href="#brand" ng-click="screen='list'; getBrands()"><b>Brands</b></a></li>
+            </ul>
+            <br/>
+            <div class="tab-content">
+               <div id="category" class="tab-pane fade in active">
+                  <div class="container">
+                     <div class="row container margin-top">
+                        <div class="container padding-all">
+                           <h4>
+                              <b ng-if="screen=='Save'">
+                                 <h4>ADD CATEGORY</h4>
+                              </b>
+                              <b ng-if="screen=='Update'">
+                                 <h4>EDIT CATEGORY</h4>
+                              </b>
+                              <b ng-if="screen=='View'">
+                                 <h4>CATEGORY DETAILS</h4>
+                              </b>
+                              <b ng-if="screen=='list'">
+                                 <h4>CATEGORIES LIST</h4>
+                              </b>
+                           </h4>
+                        </div>
+                     </div>
+                     <div ng-show="screen=='list' " class="row container margin-top">
+                        <div style="display: none;" class="padding-all col-md-5">
+                           <input type="search" class="form-control" placeholder="search users" />
+                        </div>
+                        <div style="display: none; float: left" class=" padding-all col-md-2">
+                           <a href="javascript:void(0)" ng-click="search('/configs/search')" class="btn btn-primary btn-block"><b>Search</b></a>
+                        </div>
+                        <div sec:authorize="hasAuthority('admin')" style="float: right" class=" padding-all col-md-2">
+                           <a href="javascript:void(0)" ng-click="add('/configs/add-category')" class="btn btn-primary btn-block"><b>ADD CATEGORY</b></a>
+                        </div>
+                     </div>
+                     <div ng-show="screen=='list'" class="container">
+                        <table class="table table-bordered margin-top">
+                           <thead>
+                              <tr class="bg-head">
+                                 <th class="col-md-1">Sr. No</th>
+                                 <th class="col-md-3">Category</th>
+                                 <th class="col-md-3">Date</th>
+                                 <th class="col-md-2">Actions</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr ng-repeat="user in categories.content">
+                                 <td>{{$index+1}}</td>
+                                 <td>{{user.name}}</td>
+                                 <td>{{user.insertTimestamp | date : 'short'}}</td>
+                                 <td><a href="#" ng-click="view(user, 'category');" >View</a>
+                                    <span  > | </span>  <a href="#" ng-click="edit(user, '/configs/add-category', 'category');">Edit</a>
+                                    <span  > | </span>  <a href="#">Delete</a>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        
+                        <pager total-items="categories.totalElements" ng-model="currentPage" ng-change="pageChanged( '/configs/getcategories')" items-per-page="categories.numberOfElements"></pager>
+                     </div>
+                     <div class="row container margin-top" ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+                        <form action="{{action}}"  name="merchantForm" role="form" method="Post" novalidate="true">
+                           <div class="col-md-12">
+                              <div class="row">
+                                 <div class="panel panel-default" style="">
+                                    <div class="title panel-heading">
+                                       <b ng-if="screen=='Save'"><i class="fa fa-angle-right"></i> &nbsp;Add Category</b> <b ng-if="screen=='Update'"> <i
+                                          class="fa fa-angle-right"></i> &nbsp;Edit Category
+                                       </b> <b ng-if="screen=='View'"> <i class="fa fa-angle-right"></i> &nbsp;View Category
+                                       </b>
+                                    </div>
+                                    <div class="panel-body">
+                                       <div class="row">
+                                          <div class="col-md-4">
+                                             <!-- NAME -->
+                                             <div class="form-group" >
+                                                <label>Category Name</label>
+                                                <input type="text" ng-show="false" ng-model="category.id"/>
+                                                <!-- <label>{{code.product.name}}</label> -->
+                                                <input type="text" class="form-control" required="true"  name="name" placeholder="Category Name" ng-model="category.name"
+                                                   ng-change="checkDuplicate( '/configs/check-category')" /> <br /> <!-- <label class="registerErrorMsg" ng-if="isEmptyUser!=null">{{isEmptyUser}}</label> -->
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <hr />
+                                 <button ng-hide="screen=='View'" type="button" class="btn btn-primary btn-default" ng-click="save(screen, category)">
+                                 <i class="fa fa-plus-square"></i> {{screen}}
+                                 </button>
+                                 <button ng-click="screen='list'" type="button" class="btn btn-danger btn-default">
+                                 <i class="fa fa-plus-square"></i> Cancel/Back
+                                 </button>
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+               <div id="division" class="tab-pane fade">
+                  <div class="container">
+                     <div class="row container margin-top">
+                        <div class="container padding-all">
+                           <h4>
+                              <b ng-if="screen=='Save'">
+                                 <h4>ADD DIVISION</h4>
+                              </b>
+                              <b ng-if="screen=='Update'">
+                                 <h4>EDIT DIVISION</h4>
+                              </b>
+                              <b ng-if="screen=='View'">
+                                 <h4>DIVISION DETAILS</h4>
+                              </b>
+                              <b ng-if="screen=='list'">
+                                 <h4>DIVISIONS LIST</h4>
+                              </b>
+                           </h4>
+                        </div>
+                     </div>
+                     <div ng-show="screen=='list' " class="row container margin-top">
+                        <div style="display: none;" class="padding-all col-md-5">
+                           <input type="search" class="form-control" placeholder="search users" />
+                        </div>
+                        <div style="display: none; float: left" class=" padding-all col-md-2">
+                           <a href="javascript:void(0)" ng-click="search('/configs/search')" class="btn btn-primary btn-block"><b>Search</b></a>
+                        </div>
+                        <div sec:authorize="hasAuthority('admin')" style="float: right" class=" padding-all col-md-2">
+                           <a href="javascript:void(0)" ng-click="add('/configs/add-division')" class="btn btn-primary btn-block"><b>ADD DIVISION</b></a>
+                        </div>
+                     </div>
+                     <div ng-show="screen=='list'" class="container">
+                        <table class="table table-bordered margin-top">
+                           <thead>
+                              <tr class="bg-head">
+                                 <th class="col-md-1">Sr. No</th>
+                                 <th class="col-md-3">Division</th>
+                                 <th class="col-md-3">Category</th>
+                                 <th class="col-md-3">Date</th>
+                                 <th class="col-md-2">Actions</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr ng-repeat="user in divisions.content">
+                                 <td>{{$index+1}}</td>
+                                 <td>{{user.name}}</td>
+                                 <td>{{user.category.name}}</td>
+                                 <td>{{user.insertTimestamp| date : 'short'}}</td>
+                                 <td><a href="#" ng-click="view(user, 'division');" >View</a>
+                                    <span  > | </span>  <a href="#" ng-click="edit(user, '/configs/add-division', 'division');">Edit</a>
+                                    <span  > | </span>  <a href="#">Delete</a>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        <pager total-items="divisions.totalElements" ng-model="currentPage" ng-change="pageChanged( '/configs/getdivisions')" items-per-page="divisions.numberOfElements"></pager>
+                     </div>
+                     <div class="row container margin-top" ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+                        <form action="{{action}}"  name="merchantForm" role="form" method="Post" novalidate="true">
+                           <div class="col-md-12">
+                              <div class="row">
+                                 <div class="panel panel-default" style="">
+                                    <div class="title panel-heading">
+                                       <b ng-if="screen=='Save'"><i class="fa fa-angle-right"></i> &nbsp;Add Division</b> <b ng-if="screen=='Update'"> <i
+                                          class="fa fa-angle-right"></i> &nbsp;Edit Division
+                                       </b> <b ng-if="screen=='View'"> <i class="fa fa-angle-right"></i> &nbsp;View Division
+                                       </b>
+                                    </div>
+                                    <div class="panel-body">
+                                       <div class="row">
+                                       	<div class="col-md-4 ">
+											 <label for="category">Category:</label>
+											 <input type="text" ng-show="false" ng-model="division.id"/> 
+										     <select  class="form-control" required="true" name="category" id="category"
+										        ng-options="category as category.name for category in allcategories track by category.id"
+										        ng-model="division.category">
+										     	<option value=""></option>   
+										     </select>
+										     <!-- <span style="color: red" ng-if="isCategoryEmpty!=null">{{isCategoryEmpty}}</span> -->
+										</div>
+                                          <div class="col-md-4">
+                                             <!-- NAME -->
+                                             <div class="form-group" >
+                                                <label>Division Name</label>
+                                                <!-- <label>{{code.product.name}}</label> -->
+                                                <input type="text" class="form-control" required="true"  name="name" placeholder="Category Name" ng-model="division.name"
+                                                   ng-change="checkDuplicate( '/configs/check-category')" /> <br /> <!-- <label class="registerErrorMsg" ng-if="isEmptyUser!=null">{{isEmptyUser}}</label> -->
+                                             </div>
+                                          </div>
+                                          
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <hr />
+                                 <button ng-hide="screen=='View'" type="button" class="btn btn-primary btn-default" ng-click="save(screen, division)">
+                                 <i class="fa fa-plus-square"></i> {{screen}}
+                                 </button>
+                                 <button ng-click="screen='list'" type="button" class="btn btn-danger btn-default">
+                                 <i class="fa fa-plus-square"></i> Cancel/Back
+                                 </button>
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+               <div id="brand" class="tab-pane fade">
+                  <div class="container">
+                     <div class="row container margin-top">
+                        <div class="container padding-all">
+                           <h4>
+                              <b ng-if="screen=='Save'">
+                                 <h4>ADD BRAND</h4>
+                              </b>
+                              <b ng-if="screen=='Update'">
+                                 <h4>EDIT BRAND</h4>
+                              </b>
+                              <b ng-if="screen=='View'">
+                                 <h4>BRAND DETAILS</h4>
+                              </b>
+                              <b ng-if="screen=='list'">
+                                 <h4>BRANDS LIST</h4>
+                              </b>
+                           </h4>
+                        </div>
+                     </div>
+                     <div ng-show="screen=='list' " class="row container margin-top">
+                        <div style="display: none;" class="padding-all col-md-5">
+                           <input type="search" class="form-control" placeholder="search users" />
+                        </div>
+                        <div style="display: none; float: left" class=" padding-all col-md-2">
+                           <a href="javascript:void(0)" ng-click="search('/configs/search')" class="btn btn-primary btn-block"><b>Search</b></a>
+                        </div>
+                        <div sec:authorize="hasAuthority('admin')" style="float: right" class=" padding-all col-md-2">
+                           <a href="javascript:void(0)" ng-click="add('/configs/add-brand')" class="btn btn-primary btn-block"><b>ADD BRAND</b></a>
+                        </div>
+                     </div>
+                     <div ng-show="screen=='list'" class="container">
+                        <table class="table table-bordered margin-top">
+                           <thead>
+                              <tr class="bg-head">
+                                 <th class="col-md-1">Sr. No</th>
+                                 <th class="col-md-3">Brand</th>
+                                 <th class="col-md-3">Division</th>
+                                 <th class="col-md-3">Category</th>
+                                 <th class="col-md-3">Date</th>
+                                 <th class="col-md-2">Actions</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr ng-repeat="user in brands.content">
+                                 <td>{{$index+1}}</td>
+                                 <td>{{user.name}}</td>
+                                 <td>{{user.division.name}}</td>
+                                 <td>{{user.category.name}}</td>
+                                 <td>{{user.insertTimestamp | date : 'short'}}</td>
+                                 <td><a href="#" ng-click="view(user, 'brand');" >View</a>
+                                    <span  > | </span>  <a href="#" ng-click="brand = user;edit(user, '/configs/add-brand', 'brand');">Edit</a>
+                                    <span  > | </span>  <a href="#">Delete</a>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        <pager total-items="brands.totalElements" ng-model="currentPage" ng-change="pageChanged( '/configs/getbrands')" items-per-page="brands.numberOfElements"></pager>
+                     </div>
+                     <div class="row container margin-top" ng-show="screen=='Save' || screen== 'Update' || screen=='View'">
+                        <form action="{{action}}"  name="merchantForm" role="form" method="Post" novalidate="true">
+                           <div class="col-md-12">
+                              <div class="row">
+                                 <div class="panel panel-default" style="">
+                                    <div class="title panel-heading">
+                                       <b ng-if="screen=='Save'"><i class="fa fa-angle-right"></i> &nbsp;Add Brand</b> <b ng-if="screen=='Update'"> <i
+                                          class="fa fa-angle-right"></i> &nbsp;Edit Brand
+                                       </b> <b ng-if="screen=='View'"> <i class="fa fa-angle-right"></i> &nbsp;View Brand
+                                       </b>
+                                    </div>
+                                    <div class="panel-body">
+                                       <div class="row">
+                                          <div class="col-md-4 ">
+											 <label for="category">Category:</label>
+											 <input type="text" ng-show="false" ng-model="brand.id"/>
+										     <select  class="form-control" name="category" id="category"
+										        ng-options="category as category.name for category in allcategories track by category.id"
+										        ng-model="brand.category" ng-change="getDivisionsByCategory(brand.category)">
+										     	<option value=""></option>   
+										     </select>
+										     <span style="color: red" ng-if="isCategoryEmpty!=null">{{isCategoryEmpty}}</span>
+										</div>
+										<div class="col-md-4 ">
+											 <label for="category">Division :</label>
+										     <select name="type" class="form-control" id="type"
+										        ng-options="type as type.name for type in types track by type.id"
+										        ng-model="brand.division">
+										        <option value=""></option>
+										        </select>
+										        <span style="color: red" ng-if="isDivisionEmpty!=null">{{isDivisionEmpty}}</span>
+										</div>
+                                          <div class="col-md-4">
+                                             <!-- NAME -->
+                                             <div class="form-group" >
+                                                <label>Brand Name</label>
+                                                <!-- <label>{{code.product.name}}</label> -->
+                                                <input type="text" class="form-control" required="true"  name="name" placeholder="Brand Name" ng-model="brand.name"
+                                                   ng-change="checkDuplicate( '/configs/check-brand')" /> <br /> <!-- <label class="registerErrorMsg" ng-if="isEmptyUser!=null">{{isEmptyUser}}</label> -->
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <hr />
+                                 <button ng-hide="screen=='View'" type="button" class="btn btn-primary btn-default" ng-click="save(screen, brand)">
+                                 <i class="fa fa-plus-square"></i> {{screen}}
+                                 </button>
+                                 <button ng-click="screen='list'" type="button" class="btn btn-danger btn-default">
+                                 <i class="fa fa-plus-square"></i> Cancel/Back
+                                 </button>
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <!-- <div ng-show="screen=='list'" class="container">
+               <table class="table table-bordered margin-top">
+               	<thead>
+               		<tr class="bg-head">
+               			<th class="col-md-1">Sr. No</th>
+               			<th class="col-md-2">Merchant Name</th>
+               			<th class="col-md-2">Store Name</th>
+               			<th class="col-md-2">Mobile</th>
+               			<th class="col-md-2" style="word-wrap: break-word">Address</th>
+               			<th class="col-md-2">Actions</th>
+               			
+               		</tr>
+               	</thead>
+               	<tbody>
+               		<tr ng-repeat="user in users.content">
+               			<td>{{$index+1}}</td>
+               			<td>{{user.name}}</td>
+               			<td>{{user.store.name}}</td>
+               			<td>{{user.msisdn}}</td>
+               			<td>{{user.location}}</td>
+               			<td><a href="#" ng-click="viewMerchant(user);" >View</a>
+               			 <span  > | </span>  <a href="#" ng-click="editMerchant(user);">Edit</a>
+               			 <span  > | </span>  <a href="#">Delete</a></td>
+               		</tr>
+               	</tbody>
+               </table>
+               <pager total-items="users.totalElements" ng-model="currentPage" ng-change="pageChanged()" items-per-page="users.numberOfElements"></pager>
+               </div> --> 
+         </div>
+      </div>
+      <!-- Start of the footer  -->
+      <div class="site-footer">
+         <div class="blue-strip"></div>
+         <div class="red-strip">
+            <div class="container">
+               <div class="col-sm-10"></div>
+               <div class="col-sm-2">
+                  <span class="float-right">a trueCheck intiative</span>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- End of the footer  -->
+      <!-- js placed at the end of the document so the pages load faster
+         -->
+      <script src="/public/js/jquery.js"></script>
+      <script src="/public/js/bootstrap.min.js"></script>
+   </body>
+</html>

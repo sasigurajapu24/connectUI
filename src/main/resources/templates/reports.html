@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+
+	<div th:replace="menu :: menu">...</div>
+
+
+	<!-- container-fluid end  -->
+	<div ng-app="tc" ng-controller="reportsCtrl" style="min-height: 416px">
+
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container padding-all">
+					<b><h4>REPORTS</h4></b>
+				</div>
+			</div>
+
+
+			<div ng-show="screen=='list' " class="row container margin-top">
+
+				<div class="padding-all col-md-2">
+
+					<form class="form-inline" role="form">
+						<div class="form-group">
+							<select class="form-control" name="product.id"
+								ng-model="product"
+								ng-options="prod.name for prod in products.content track by prod.id">
+								<option value="" label="">Select Product</option>
+							</select>
+						</div>
+					</form>
+				</div>
+				<div style="float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="getData(product)"
+						class="btn btn-primary btn-block"><b>Show Result</b></a>
+				</div>
+			</div>
+			
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th>Serial Number</th>
+							<th>Mobile Number</th>
+							<th>Date</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="hit in hits.content">
+							<td>{{$index+1}}</td>
+							<td>{{hit.msisdn}}</td>
+							<td>{{hit.insertTimestamp | date:'medium'}}</td>
+							<td>{{hit.isValid == 'Y' ? 'Valid Product' : 'Invalid Product'}}</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<pager total-items="hits.totalElements" ng-model="currentPage" ng-change="pageChanged()"  items-per-page="hits.numberOfElements"></pager>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<!-- Start of the footer  -->
+	<div class="site-footer">
+		<div class="blue-strip"></div>
+		<div class="red-strip">
+			<div class="container">
+				<div class="col-sm-10"></div>
+				<div class="col-sm-2">
+					<span class="float-right">A TrueCheck intiative</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of the footer  -->
+
+
+
+	<!-- js placed at the end of the document so the pages load faster
+	-->
+	<script src="/public/js/jquery.js">
+		
+	</script>
+	<script src="/public/js/bootstrap.min.js">
+		
+	</script>
+</body>
+</html>

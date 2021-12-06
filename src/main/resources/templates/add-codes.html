@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<div th:replace="includes :: includes">...</div>
+
+<body ng-app="tc" ng-controller="tcCntrl">
+	
+		<div th:replace="menu :: menu">...</div>
+
+	<!-- container-fluid end  -->
+	<div  ng-app="tc" id="codesdiv" ng-controller="codesCntrl" style="min-height:416px">
+	
+		<div class="container">
+			<div class="col-md-12">
+				<div class="container padding-all">
+					<b ng-if="screen=='Save'"><h4>ADD CODE</h4></b> <b ng-if="screen=='Update'"><h4>EDIT CODE</h4></b> 
+					<b ng-if="screen=='View'"><h4>CODE DETAILS</h4></b> <b ng-if="screen=='list'"><h4>CODES LIST</h4></b>
+				</div>
+			</div>
+
+			<div ng-show="screen=='list' " class="row container margin-top">
+				<div class="padding-all col-md-5">
+					<input type="search" class="form-control"
+						placeholder="search codes" ng-model="search.query"/>
+
+				</div>
+				<div style="float: left" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="searchCodes(search)"
+						class="btn btn-primary btn-block"><b>Search</b></a>
+				</div>
+				<div sec:authorize="hasAuthority('user')" style="float: right" class=" padding-all col-md-2">
+					<a href="javascript:void(0)" ng-click="addCodes()"
+						class="btn btn-primary btn-block"><b>ADD CODE</b></a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+						<div ng-show="errors.length > 0" class="alert alert-danger">
+  							<div ng-repeat="error in errors">{{error.defaultMessage}}</div>
+						</div>
+				</div>
+			</div>
+			<div class="row container margin-top"
+				ng-show="screen=='Save' || screen=='Update' || screen == 'View' || screen == 'Delete'  ">
+
+				<form action="{{action}}" role="form" method="Post">
+					<div class="col-md-12">
+						<div class="panel panel-default" style="">
+							<div class="title panel-heading">
+								<b><i class="fa fa-angle-right"></i>
+									&nbsp;Code Details</b> 
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="form-group col-md-4">
+										<label class="required-field">Product</label>
+										<!-- <label>{{code.product.name}}</label> -->
+										<select class="form-control" name="product.id" ng-model="code.product" ng-options="prod.name for prod in products track by prod.id" 
+										ng-readonly="screen=='View' || screen=='Update'">
+											<option value="" label="">Please Select</option>
+										</select> <span style="color: red" ng-if="isProductEmpty!=null">{{isProductEmpty}}</span>
+									</div>
+									
+									<div class="form-group col-md-4">
+										<label class="required-field">Batch code</label> <input type="text" class="form-control" name="batchCode" ng-model="code.batchCode"
+											ng-readonly="screen=='View' || screen=='Update'"></input> <span style="color: red" ng-if="isBCodeEmpty!=null">{{isBCodeEmpty}}</span>
+									</div>
+									<div class="form-group col-md-4">
+										<label class="required-field">Number of products for batch</label> <input type="number" class="form-control" name="layoutName"
+											ng-model="code.noProductBatch" ng-readonly="screen=='View' || screen=='Update'"></input> <span style="color: red" ng-if="isPrdctEmpty!=null">{{isPrdctEmpty}}</span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group col-md-4">
+										<label class="required-field">Mfg date</label>
+										<div class="inner-addon right-addon">
+											<input ng-click="open($event)" type="text" ng-readonly="true" required="required" class="form-control" datepicker-popup="yyyy-MM-dd"
+												ng-model="code.mfgDate" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+												date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" /> <i ng-click="open($event)"
+												class="glyphicon glyphicon-calendar"></i>
+										</div>
+										<span style="color: red" ng-if="ismfgDateEmpty!=null">{{ismfgDateEmpty}}</span>
+									</div>
+									<div class="form-group col-md-4">
+										<label>Exp date</label>
+										<div class="inner-addon right-addon">
+											<input ng-click="open1($event)" type="text" ng-readonly="true" required="required" class="form-control" datepicker-popup="yyyy-MM-dd"
+												ng-model="code.expDate" is-open="status1.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+												date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" /> <i ng-click="open1($event)"
+												class="glyphicon glyphicon-calendar"></i>
+										</div>
+									</div>
+									<div class="form-group col-md-4">
+										<label class="required-field">Product specifications</label> 
+										<textarea class="form-control" name="productSpecification"
+											ng-model="code.productSpecification" ng-disabled="screen=='View'"></textarea>
+										<span style="color: red" ng-if="isPrdctSpecEmpty!=null">{{isPrdctSpecEmpty}}</span>
+									</div>
+									<div class="form-group col-md-4">
+										<label class="required-field">Special instructions</label>
+										<textarea class="form-control" name="specialInstruction" ng-model="code.specialInstruction" ng-disabled="screen=='View'"></textarea>
+										<span style="color: red" ng-if="isSpecialInsEmpty!=null">{{isSpecialInsEmpty}}</span>
+									</div>
+								</div>
+								<!-- <div class="row">
+									<div class="form-group col-md-4">
+										<label class="required-field">Thanks message</label>
+										<textarea class="form-control" name="thanksMsg" ng-model="code.thanksMsg" ng-disabled="screen=='View'"></textarea>
+										<span style="color: red" ng-if="isthnkEmpty!=null">{{isthnkEmpty}}</span>
+									</div>
+									<div class="form-group col-md-4">
+										<label class="required-field">Rewards</label><br /> <input type="radio" name="isActive" ng-model="code.rewards" value="1"
+											ng-readonly="screen=='View'"></input> <span class="">Enable</span> <input type="radio" name="isActive" ng-model="code.rewards" value="0"
+											ng-readonly="screen=='View'"></input> <span class="">Disable</span>
+									</div>
+								</div> -->
+								<!-- <div class="row">
+									<div class="form-group col-md-4">
+										<label class="required-field">Promotion message</label>
+										<textarea class="form-control" name="promotionMsg" ng-model="code.promotionMsg" ng-disabled="screen=='View'"></textarea>
+										<span style="color: red" ng-if="isPrmpMsgEmpty!=null">{{isPrmpMsgEmpty}}</span>
+									</div>
+									<div class="form-group col-md-4">
+										<label class="required-field">Special instructions</label>
+										<textarea class="form-control" name="specialInstruction" ng-model="code.specialInstruction" ng-disabled="screen=='View'"></textarea>
+										<span style="color: red" ng-if="isSpecialInsEmpty!=null">{{isSpecialInsEmpty}}</span>
+									</div>
+								</div> -->
+							</div>
+						</div>
+						
+						<div class="panel panel-default" style="">
+							<div class="title panel-heading">
+								<b><i class="fa fa-angle-right"></i>
+									&nbsp;Product Specifications</b> 
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-4 ">
+										<div class="form-group">
+											<label class="required-field">Size :</label>
+											<input type="text"  class="form-control" placeholder="" maxlength="50" name="directions" ng-model="code.size" ng-disabled="screen=='View'"></input>
+											<span style="color: red" ng-if="isDirEmpty!=null">{{isDirEmpty}}</span>
+										</div>
+									</div>
+									<div class="col-md-4 ">
+										<div class="form-group">
+											<label class="required-field">Color :</label>
+											<input type="text"  class="form-control" name="warnings" maxlength="50" ng-model="code.color" ng-readonly="screen=='View' "></input>
+											<span style="color: red" ng-if="isWarningEmpty!=null">{{isWarningEmpty}}</span>
+										</div>
+									</div>
+									<div class="col-md-4 ">
+										<div class="form-group">
+											<label class="required-field">Price : </label>
+											<input type="number" class="form-control" name="notes" maxlength="9"  ng-model="code.price" ng-readonly="screen=='View' "></input>
+											<span style="color: red" ng-if="isPriceEmpty!=null">{{isPriceEmpty}}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="title panel-heading">
+								<b><i class="fa fa-angle-right"></i> &nbsp;Enable / Disable for this product (for consumers)</b>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-init="code.suggestions='0'" ng-model="code.suggestions"></input><span
+												class="radio-txt">Suggestions</span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-init="code.contactInfo='0'" ng-model="code.contactInfo"></input><span
+												class="radio-txt">Contact info</span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-init="code.warranty='0'" ng-model="code.warranty"></input><span
+												class="radio-txt">Warranty</span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-init="code.feedback='0'" ng-model="code.feedback"></input><span
+												class="radio-txt">Feedback</span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-init="code.review='0'" ng-model="code.review"></input><span
+												class="radio-txt"> Review</span>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-init="code.bill='0'" ng-model="code.bill"></input><span
+												class="radio-txt"> Bill</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div  class="col-md-12">
+					
+					<hr/>
+								<button ng-hide="screen=='View'" type="button"
+									class="btn btn-primary btn-default" ng-click="submitForm(screen, code )">
+									<i class="fa fa-plus-square"></i> {{screen}}
+								</button>
+								<a href="#" ng-click="screen='list'" class="btn btn-danger btn-default"><i
+									class="fa fa-undo"></i>Cancel/ Back</a>
+					</div>
+				</form>
+			</div>
+			<div ng-show="screen=='list'" class="container">
+				<table class="table table-bordered margin-top">
+					<thead>
+						<tr class="bg-head">
+							<th>Product Name</th>
+							<th>Batch Code</th>
+							<th>Mfg Date</th>
+							<th>Exp Date</th>
+							<th>Actions</th>
+							<th>TrueCheck Code</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="uniqueCode in codes.content">
+							<!-- <td>{{$index+1}}</td> -->
+							<td>{{uniqueCode.product.name}}</td>
+							<td>{{uniqueCode.batchCode}}</td>
+							<td>{{uniqueCode.mfgDate}}</td>
+							<td>{{uniqueCode.expDate}}</td>
+							<td><a href="javascript:void(0)" ng-click="viewCode(uniqueCode);">View</a>
+								<span  sec:authorize="hasAuthority('user')" ng-show="uniqueCode.status == 0">|</span> 
+								<a  sec:authorize="hasAuthority('user')" ng-show="uniqueCode.status == 0" href="javascript:void(0)" ng-click="editCode(uniqueCode);">Edit</a>
+								<span  sec:authorize="hasAuthority('user')">|</span>  
+								 <a href="javascript:void(0)" ng-click="deleteCode(uniqueCode);"  sec:authorize="hasAuthority('user')">Delete</a></td>
+							<td><a href=""  sec:authorize="hasAuthority('user')"  ng-show="uniqueCode.status == 0" class="btn btn-danger btn-block" ng-click="requestCodes(uniqueCode.id)"><b>REQUEST
+										CODES</b></a> <span  sec:authorize="hasAuthority('user')" ng-show="uniqueCode.status == 1" style="color: green"><strong>REQUEST SENT</strong></span></td>
+						</tr>
+					</tbody>
+				</table>
+				<pager total-items="codes.totalElements" ng-model="currentPage" ng-change="pageChanged()"  items-per-page="codes.numberOfElements"></pager>
+			</div>
+		</div>
+		
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+			    var message = '[[${productId}]]';
+			    $( document ).ready(function() {
+				    var scp = angular.element($("#codesdiv")).scope();
+					if(message != 'null'){
+						scp.addCodes();
+					}
+			    });
+			
+			/*]]>*/
+		</script>
+	</div>
+	<!-- Start of the footer  -->
+	<div class="site-footer">
+		<div class="blue-strip"></div>
+		<div class="red-strip">
+			<div class="container">
+				<div class="col-sm-10"></div>
+				<div class="col-sm-2">
+					<span class="float-right">a trueCheck intiative</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of the footer  -->
+
+
+
+	<!-- js placed at the end of the document so the pages load faster
+	-->
+	<script src="/public/js/jquery.js">
+		
+	</script>
+	<script src="/public/js/bootstrap.min.js">
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>trueCheck - Anti Counterfeit</title>
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" />
+<!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+<script src="/public/js/angular.js"></script>
+<script src="/public/js/tc-reg.js"></script>
+<link href="/public/css/style.css" rel="stylesheet" />
+</head>
+<body ng-app="reg" ng-controller="regCtrl1">
+	<div id="main">
+		<div id="box">
+			<div id="logbox">
+				<div id="logbox_in">
+					<div id="login" style="width: 400px; margin: 50px auto;">
+						<form enctype="multipart/form-data">
+							<fieldset class="clearfix">
+								<p>
+									<span style="width: 80px"> User Name </span><input type="text" name="username" placeholder="Username" ng-model="user.username"
+										ng-change="isExistUser()" /> <br /> <label class="registerErrorMsg" ng-if="isEmptyUser!=null">{{isEmptyUser}}</label>
+								</p>
+								<!-- JS because of IE support; better: placeholder="Username" -->
+								<p>
+									<span style="width: 80px"> Password </span><input type="text" name="password" placeholder="Password" ng-model="user.password" /> <br /> <label
+										class="registerErrorMsg" ng-if="isEmptyPassword!=null">{{isEmptyPassword}}</label>
+								</p>
+								<p>
+									<span style="width: 80px"> PersonName </span><input type="text" name="person" placeholder="Contact Person" ng-model="user.person" /> <br />
+									<label class="registerErrorMsg" ng-if="isEmptyPerson!=null">{{isEmptyPerson}}</label>
+								</p>
+								<p>
+									<span style="width: 80px"> Mobile </span><input type="text" maxlength="10" name="mobile" placeholder="Mobile" ng-model="user.mobile" /> <br />
+									<label class="registerErrorMsg" ng-if="isEmptyMobile!=null">{{isEmptyMobile}}</label>
+								</p>
+								<p>
+									<span style="width: 80px"> E-Mail </span><input type="text" name="emailid" placeholder="E-mail" ng-model="user.emailid"
+										ng-change="isExistEmail()" /> <br /> <label class="registerErrorMsg" ng-if="emailExist!=null">{{emailExist}}</label>
+								</p>
+								<p>
+									<span style="width: 80px"> Company </span><input type="text" name="companyName" placeholder="Company Name" ng-model="user.companyName" /> <br />
+									<label class="registerErrorMsg" ng-if="isEmptyComapany!=null">{{isEmptyComapany}}</label>
+								</p>
+								<p>
+									<span style="width: 80px"> Logo </span><input type="file" name="image" placeholder="Select Logo" file-model="user.logo" />
+								</p>
+								<p>
+									<span style="width: 80px"> Address </span>
+									<textarea type="text" name="address" rows="3" placeholder="Address" ng-model="user.address"></textarea>
+									<br /> <label class="registerErrorMsg" ng-if="isEmptyAddress!=null">{{isEmptyAddress}}</label>
+								</p>
+								<!-- JS because of IE support; better: placeholder="Password" -->
+								<p>
+									<button type="button" class="btn btn-primary btn-default" ng-click="register(user)">
+										<i class="fa fa-plus-square"></i>Submit
+									</button>
+								</p>
+								<!-- <p>
+                              <button type="button" class="btn btn-primary btn-default"  ng-click="register(user)" />
+                           </p> -->
+							</fieldset>
+						</form>
+						<!-- <p>
+                        <a href="javascript(0)">Forgot Password?</a><span></span> <a href="/register/registration">New User!</a>
+                        </p> -->
+					</div>
+					<!-- end login -->
+					<div class="cl">&nbsp;</div>
+				</div>
+				<!-- end logbox_in -->
+			</div>
+			<!-- end logbox -->
+		</div>
+		<!-- end box -->
+	</div>
+	<!-- end main -->
+</body>
+</html>
+<!-- <!DOCTYPE html>
+   <html lang="en">
+   <div th:replace="includes :: includes">...</div>
+   <head>
+   <link href="/public/css/style.css" rel="stylesheet"/>
+   </head>
+   <body ng-app="tc" ng-controller="tcCntrl">
+   	<div class="container">
+   			<div class="header logo">
+   				<a href="#"><img height="66" width="260" src="/public/img/logo.png" /></a>
+   				<span><a href="/logout" class="float-right">Logout</a></span>
+   				<span><a	href="" class="float-right"><span sec:authorize="isAuthenticated()"> Welcome :  Guest  </span> &nbsp;|&nbsp;</a></span>
+   			</div>
+   	</div>
+   	container-fluid end 
+   	<div ng-app="tc" ng-controller="regCtrl" style="min-height: 416px">
+   
+   		<div class="container" id="box">
+   			<div class="row container margin-top">
+   				<div class="container padding-all">
+   					<h4><b>&nbsp;Company/Person Details</b></h4>
+   				</div>
+   			</div>
+   			
+   			<div class="row container margin-top">
+   				<div ng-show="errors.length > 0" class="alert alert-danger">
+   					<div ng-repeat="error in errors">{{error.defaultMessage}}</div>
+   				</div>
+   			</div>
+   
+   			<div class="row container margin-top" >
+   				<form action="#" th:action="@{~/register/create}" th:object="${user}" method="post" enctype="multipart/form-data">
+   					<div class="col-md-6"></div>
+   					<div class="col-md-6">
+   							<div class="panel-body">
+   								<div class="row">
+   								<div class="col-md-12 ">
+   									<div class="panel panel-default">
+   										<div class="title panel-heading">
+   											<b ><i class="fa fa-angle-right"></i>
+   												&nbsp;Login Details</b>
+   										</div>
+   										<div class="panel-body">
+   											<div class="row">
+   												<div class="col-md-6">
+   													<div class="form-group">
+   														<label>User Name</label> <input type="hidden" ng-hide="true"
+   															class="form-control" th:field="*{id}"/> 
+   															<input type="text"
+   															class="form-control" placeholder="Name" name="name"
+   															ng-blur="checkName(name)" ng-model="user.name" th:field="*{username}"/> 
+   															<span style="color: red" ng-show="nameerror != ''">{{nameerror}}</span>
+   													</div>
+   												</div>
+   												<div class="col-md-6 "></div>
+   												<div class="col-md-6 ">
+   													<div class="form-group">
+   														<label>Password</label> <input type="text"
+   															class="form-control" placeholder="file" name="file"
+   															ng-model="user.password"
+   															ng-readonly="screen=='View'" />
+   													</div>
+   												</div>
+   												<div class="col-md-4 ">
+   													<div class="form-group">
+   														<label>Password</label> <input type="text"
+   															class="form-control" placeholder="" name="hits"
+   															ng-model="product.hits" ng-disabled="screen=='View'" />
+   													</div>
+   												</div>
+   												<div class="col-md-4 ">
+   													<div class="form-group">
+   														<label>Re-enter Password</label> <input type="text"
+   															class="form-control" placeholder="" name="points"
+   															ng-model="product.points" ng-disabled="screen=='View'" />
+   													</div>
+   												</div>
+   												<div class="col-md-4 ">
+   													<div class="form-group">
+   														<label>E-mail</label> <input type="text"
+   															class="form-control" placeholder="" name="targetPoints"
+   															ng-model="product.targetPoints"
+   															ng-disabled="screen=='View'" />
+   													</div>
+   												</div>
+   												<div class="col-md-4 ">
+   										<div class="form-group">
+   											<label>Company</label> <select class="form-control"
+   												name="company.id" ng-model="product.company.id">
+   												<option value="">Select Company</option>
+   												<option value="{{company.id}}" ng-repeat="company in companies">{{company.name}}</option>
+   											</select>
+   										</div>
+   									</div>
+   											</div>
+   										</div>
+   									</div>
+   								</div>
+   								</div>
+   
+   								<div class="row">
+   									<div class="col-md-12 ">
+   									<div class="panel panel-default" style="">
+   										<div class="title panel-heading">
+   											<b><i class="fa fa-angle-right"></i>
+   												&nbsp;Company Details</b>
+   										</div>
+   										<div class="panel-body">
+   											<div class="row">
+   												<div class="col-md-4 ">
+   													<div class="form-group">
+   														<label>Name</label>
+   														<textarea rows="" cols="" class="form-control"
+   															name="thanksMsg" ng-model="product.thanksMsg"
+   															ng-readonly="screen=='View' "></textarea>
+   
+   													</div>
+   												</div>
+   												<div class="col-md-4 ">
+   										<div class="form-group">
+   											<label>Fake Massage</label>
+   											<textarea rows="" cols="" class="form-control" name="fakeMsg"
+   												ng-model="product.fakeMsg" ng-readonly="screen=='View' "></textarea>
+   										</div>
+   									</div>
+   												<div class="col-md-4 ">
+   													<div class="form-group">
+   														<label>Logo</label>
+   														<textarea rows="" cols="" class="form-control"
+   															name="pointMsg" ng-model="product.pointMsg"
+   															ng-readonly="screen=='View' "></textarea>
+   													</div>
+   												</div>
+   												<div class="col-md-4 ">
+   										<div class="form-group">
+   											<label>Promotion Massage</label>
+   											<textarea rows="" cols="" class="form-control"
+   												name="promotionMsg" ng-model="product.promotionMsg"
+   												ng-readonly="screen=='View' "></textarea>
+   										</div>
+   									</div>
+   												<div class="col-md-4 ">
+   													<div class="form-group">
+   														<label>Address</label>
+   														<textarea rows="" cols="" class="form-control"
+   															name="pointtgtMsg" ng-model="product.pointtgtMsg"
+   															ng-readonly="screen=='View' "></textarea>
+   													</div>
+   												</div>
+   
+   
+   												<div class="col-md-4 ">
+   										<div class="form-group">
+   											<label>From Date:</label>
+   											<div class="inner-addon right-addon">
+   												<input ng-click="fromopen($event)" type="text"
+   													ng-readonly="true" required="required" name="fromDate"
+   													class="form-control" datepicker-popup="yyyy-MM-dd"
+   													ng-model="product.fromDate" is-open="fromstatus.opened"
+   													min-date="minDate" max-date="maxDate"
+   													datepicker-options="dateOptions"
+   													date-disabled="disabled(date, mode)" ng-required="true"
+   													close-text="Close" /> <i ng-click="fromopen($event)"
+   													class="glyphicon glyphicon-calendar"></i>
+   											</div>
+   										</div>
+   									</div>
+   									<div class="col-md-4 ">
+   										<div class="form-group">
+   											<label>TO Date:</label>
+   											<div class="inner-addon right-addon">
+   												<input ng-click="toopen($event)" type="text"
+   													ng-readonly="true" required="required" name="toDate"
+   													class="form-control" datepicker-popup="yyyy-MM-dd"
+   													ng-model="product.toDate" is-open="tostatus.opened"
+   													min-date="minDate" max-date="maxDate"
+   													datepicker-options="dateOptions"
+   													date-disabled="disabled(date, mode)" ng-required="true"
+   													close-text="Close" /> <i ng-click="toopen($event)"
+   													class="glyphicon glyphicon-calendar"></i>
+   											</div>
+   										</div>
+   									</div>
+   
+   
+   
+   											</div>
+   										</div>
+   									</div>
+   								</div>
+   								</div>
+   								<hr />
+   								<button type="submit"
+   									class="btn btn-primary btn-default">
+   									 ng-click="saveProduct(screen, product)">
+   									<i class="fa fa-plus-square"></i> save
+   								</button>
+   							</div>
+   						</div>
+   
+   				</form>
+   			</div>
+   		</div>
+   
+   	</div>
+   
+   	Start of the footer 
+   	<div class="site-footer">
+   		<div class="blue-strip"></div>
+   		<div class="red-strip">
+   			<div class="container">
+   				<div class="col-sm-10"></div>
+   				<div class="col-sm-2">
+   					<span class="float-right">a trueCheck intiative</span>
+   				</div>
+   			</div>
+   		</div>
+   	</div>
+   	End of the footer 
+   
+   
+   
+   	js placed at the end of the document so the pages load faster
+   	
+   	<script src="/public/js/jquery.js">
+   		
+   	</script>
+   	<script src="/public/js/bootstrap.min.js">
+   		
+   	</script>
+   </body>
+   </html> -->
